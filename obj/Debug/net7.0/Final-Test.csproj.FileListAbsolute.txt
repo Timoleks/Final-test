@@ -1,0 +1,15 @@
+/Users/tatianalavrinec/source/Final-Test/Final-Test/bin/Debug/net7.0/Final-Test
+/Users/tatianalavrinec/source/Final-Test/Final-Test/bin/Debug/net7.0/Final-Test.deps.json
+/Users/tatianalavrinec/source/Final-Test/Final-Test/bin/Debug/net7.0/Final-Test.runtimeconfig.json
+/Users/tatianalavrinec/source/Final-Test/Final-Test/bin/Debug/net7.0/Final-Test.dll
+/Users/tatianalavrinec/source/Final-Test/Final-Test/bin/Debug/net7.0/Final-Test.pdb
+/Users/tatianalavrinec/source/Final-Test/Final-Test/obj/Debug/net7.0/Final-Test.csproj.AssemblyReference.cache
+/Users/tatianalavrinec/source/Final-Test/Final-Test/obj/Debug/net7.0/Final-Test.GeneratedMSBuildEditorConfig.editorconfig
+/Users/tatianalavrinec/source/Final-Test/Final-Test/obj/Debug/net7.0/Final-Test.AssemblyInfoInputs.cache
+/Users/tatianalavrinec/source/Final-Test/Final-Test/obj/Debug/net7.0/Final-Test.AssemblyInfo.cs
+/Users/tatianalavrinec/source/Final-Test/Final-Test/obj/Debug/net7.0/Final-Test.csproj.CoreCompileInputs.cache
+/Users/tatianalavrinec/source/Final-Test/Final-Test/obj/Debug/net7.0/Final-Test.dll
+/Users/tatianalavrinec/source/Final-Test/Final-Test/obj/Debug/net7.0/refint/Final-Test.dll
+/Users/tatianalavrinec/source/Final-Test/Final-Test/obj/Debug/net7.0/Final-Test.pdb
+/Users/tatianalavrinec/source/Final-Test/Final-Test/obj/Debug/net7.0/Final-Test.genruntimeconfig.cache
+/Users/tatianalavrinec/source/Final-Test/Final-Test/obj/Debug/net7.0/ref/Final-Test.dll
