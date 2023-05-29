@@ -17,7 +17,7 @@ class Program
             var mes = Console.ReadLine();
             var response = Encoding.UTF8.GetBytes(mes);
             udpClient.Send(response, response.Length, ep);
-            Console.WriteLine("data sended");
+            Console.WriteLine("data sent");
             i++;
             var receiveData = udpClient.Receive(ref ep);
             var received = Encoding.UTF8.GetString(receiveData);
