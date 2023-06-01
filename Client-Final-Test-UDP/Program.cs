@@ -1,4 +1,5 @@
-﻿using System.Net;
+﻿
+using System.Net;
 using System.Net.Sockets;
 using System.Text;
 
@@ -22,6 +23,9 @@ class Program
             var receiveData = udpClient.Receive(ref ep);
             var received = Encoding.UTF8.GetString(receiveData);
             Console.WriteLine(received);
+            string confirmMessage = "Confirmed";
+            var responseMessage = Encoding.UTF8.GetBytes(confirmMessage);
+            udpClient.Send(responseMessage, responseMessage.Length,ep);
         }
     }
 }

@@ -1,50 +1,32 @@
 ﻿using System.Net;
 using System.Net.Sockets;
 using System.Text;
+using System.Threading;
 
 namespace UdpServer
 {
 
-    class Client
-    {
-        public IPEndPoint IpAdress { get; set; }
-        public int Count;
-        public DateTime lastReceiveTime { get; set; }
-        
-
-        public Client(IPEndPoint ipAdress)
-        {
-            IpAdress = ipAdress;
-            Count = 1;
-        }
-
-    }
-
     class Program
     {
+        private static Dictionary<IPEndPoint, Client> _clients = new();
+
+
         public static async Task Main(string[] args)
         {
-            
-            
             using var udpServer = new UdpClient(5000);
             TimeSpan timeout = TimeSpan.FromSeconds(20);
-            var clients = new Dictionary<IPEndPoint, Client>();
-            var clientsToRemove = new List<IPEndPoint>();
-            var clientsLastReceiveTime = new Dictionary<IPEndPoint, DateTime>();
-
-            
 
             Console.WriteLine("udp started with 5000 port");
 
             try
             {
+                ClientRemove(timeout); 
                 while (true)
                 {
-
                     IPEndPoint remoteEP = new IPEndPoint(IPAddress.Any, 0);
                     var receivedData = udpServer.Receive(ref remoteEP);
-
-                    ClientsDataReceiveing(udpServer, timeout, clients, remoteEP, receivedData);
+                    var received = Encoding.UTF8.GetString(receivedData);
+                    ClientsDataReceiveing(udpServer, timeout, remoteEP, received);
                 }
             }
             catch (Exception e)
@@ -55,52 +37,79 @@ namespace UdpServer
             Console.ReadKey();
         }
 
-        private static async Task ClientsDataReceiveing(UdpClient udpServer, TimeSpan timeout, Dictionary<IPEndPoint, Client> clients, IPEndPoint remoteEP, byte[] receivedData)
+        private static async Task ClientsDataReceiveing(UdpClient udpServer, TimeSpan timeout, IPEndPoint remoteEP, string received)
         {
             try
             {
-                if (clients.ContainsKey(remoteEP))
+                Client? client;
+                var clientExists = _clients.TryGetValue(remoteEP, out client);
+
+                if (received == "Confirmed" && clientExists)
                 {
-                    Client existingClient = clients[remoteEP];
-                    existingClient.Count++;
+                    client!.Received = true;
 
-
-                    existingClient.lastReceiveTime = DateTime.Now;
+                    return;
                 }
-                else
+
+                if (clientExists)
                 {
-                    Client client = new Client(remoteEP);
-                    clients[remoteEP] = client;
-                    clients[remoteEP].lastReceiveTime = DateTime.Now;
-
+                    client!.Count++;
+                    client.Received = false;
+                    client.lastReceiveTime = DateTime.Now;
+                    DataSend(udpServer, remoteEP, received);
+                    return;
                 }
-                var received = Encoding.UTF8.GetString(receivedData);
-                Console.WriteLine($"Data - \"{received}\" received from " + remoteEP.ToString());
-                var response = Encoding.UTF8.GetBytes(clients[remoteEP].Count.ToString());
-                udpServer.Send(response, response.Length, remoteEP);
 
-                await Task.Delay(20000);
-                if (DateTime.Now - clients[remoteEP].lastReceiveTime > timeout)
-                {
-                    Console.WriteLine($"client {clients[remoteEP].IpAdress} removed due to inactivity");
+                _clients[remoteEP] = new Client(remoteEP);
+                _clients[remoteEP].lastReceiveTime = DateTime.Now;
 
-                    if(clients.Remove(remoteEP))
-                    {
-                        Console.WriteLine("Client removed");
-                    }
-                    else
-                    {
-                        Console.WriteLine("Client not found");
-                    }
-                }
+                DataSend(udpServer, remoteEP, received);
+               
+
             }
-
-
-            catch(Exception e)
+            catch (Exception e)
             {
                 Console.WriteLine(e.Message);
             }
         }
+
+        
+
+        private static async Task ClientRemove(TimeSpan timeout)
+        {
+            while (true)
+            {
+                foreach (var client in _clients.Values)
+                {
+                    if (DateTime.Now - client.lastReceiveTime > timeout)
+                    {
+                        Console.WriteLine($"client {client.IpAdress} removed due to inactivity");
+
+                        if (_clients.Remove(client.IpAdress))
+                        {
+                            Console.WriteLine("Client removed");
+                        }
+                        else
+                        {
+                            Console.WriteLine("Client not found");
+                        }
+                    }
+                   
+                }
+                await Task.Delay(1000);
+            }
+            
+        }
+
+        private static void DataSend(UdpClient udpServer, IPEndPoint remoteEP, string received)
+        {
+            Console.WriteLine($"Data - \"{received}\" received from " + remoteEP.ToString());
+            var response = Encoding.UTF8.GetBytes(_clients[remoteEP].Count.ToString());
+            udpServer.Send(response, response.Length, remoteEP);
+        }
+
+
+
     }
 
 }
